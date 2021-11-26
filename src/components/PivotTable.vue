@@ -301,8 +301,7 @@ import { firstBy } from 'thenby'
 import naturalSort from 'javascript-natural-sort'
 import cloneDeep from 'lodash.clonedeep'
 import isEqual from 'lodash.isequal'
-import { ref } from '@vue/reactivity'
-
+import { ref } from 'vue'
 export default {
   props: {
     data: {
@@ -487,16 +486,7 @@ export default {
     },
     // Get labels for a cell
     labels: function (row, col) {
-      const labels = []
-
-      this.internalRowFields.forEach((rowField, rowFieldIndex) => {
-        labels.push({ field: rowField, value: row[rowFieldIndex] })
-      })
-      this.internalColFields.forEach((colField, colFieldIndex) => {
-        labels.push({ field: colField, value: col[colFieldIndex] })
-      })
-
-      return labels
+      return this.labelsMap.get([...row, ...col]) || []
     },
     // Get colspan/rowspan size
     spanSize: function (values, valueIndex, fieldIndex) {
@@ -533,7 +523,7 @@ export default {
         const rows = []
         const cols = []
         const valuesMap = new ManyKeysMap()
-
+        const labelsMap = new ManyKeysMap()
         const fields = [...this.rowFields, ...this.colFields]
 
         this.data.forEach(item => {
@@ -583,10 +573,21 @@ export default {
             valuesMap.set(key, this.reducer(previousValue, item))
           }
         })
-
+        // Update labelsMap
+        rows.forEach(row => {
+          cols.forEach(col => {
+            const key = [...row, ...col]
+            const labels = fields.map((field, fieldIndex) => ({
+              field,
+              value: key[fieldIndex]
+            }))
+            labelsMap.set(key, labels)
+          })
+        })
         this.rows = rows
         this.cols = cols
         if (updateValuesMap) this.valuesMap = valuesMap
+        this.labelsMap = labelsMap
         this.isDataComputing = false
         this.updateInternalFields()
       }, 0)

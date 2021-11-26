@@ -11,6 +11,7 @@
     class="btn-draggable"
     :hide-on-click="false"
   >
+
     <btn-icon></btn-icon>
     {{ field.label }}
     <template #dropdown>
@@ -70,12 +71,12 @@
   >
     <btn-icon></btn-icon>{{ field.label }}
   </el-button>
+
 </template>
 
 <script>
 import BtnIcon from './BtnIcon'
 import { ref, toRefs, computed } from 'vue'
-
 export default {
   model: {
     prop: 'modelValue',
@@ -133,7 +134,6 @@ export default {
       toggleAllValues,
       allValuesSelected,
       toggleShowDropdown,
-
     }
   }
 }
@@ -145,6 +145,8 @@ export default {
   min-height: 24px;
   padding: 0 0 6px 0;
 }
+/* Grid with gutter */
+.gutter-x-sm,
 .gutter-sm {
   margin-left: -0.5rem;
   > * {
@@ -155,6 +157,7 @@ export default {
 .btn-draggable {
   cursor: move !important;
   z-index: 999;
+  // padding-left: 0.5625rem;
 }
 .dropdown-header {
   margin-top: 0;
